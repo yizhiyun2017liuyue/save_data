@@ -1,0 +1,16 @@
+{
+            "mysqlDB1": {
+            "dbtype":"mysql",
+            "dbserver": "mysql1",
+            "dbport": "3306",
+            "user": "root",
+            "password": "password"
+        },
+        "6c7f172a0f77cb092770c3170eb00e72":{
+            "dbtype": "mysql",
+            "dbserver": "192.168.1.5",
+            "dbport": "3330",
+            "user": "liuyue",
+            "password": "2006213"
+        }
+}
