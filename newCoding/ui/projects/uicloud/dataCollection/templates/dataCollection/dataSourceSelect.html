@@ -1,0 +1,66 @@
+{% extends "common/nav_base.html" %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href={% static "dataCollection/css/dataSourceSelect.css" %}>
+{% endblock %}
+{% block js %}
+    <script src={% static "dataCollection/js/dataSourceSelect.js"%} type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="dataSourceSelect-content">
+		<div class="dataSourceSelect-welcomeInfo">
+			<p class="welcome">欢迎使用Pallasdata Desktop</p>
+			<p class="guide">需要更多指导?<a href="#">试看教程</a>或<a href="#">观看视频</a></p>
+		</div>
+		<div class="dataSourceSelect-dataSelect">
+            <p class="dataSelect-title">导入或连接数据</p>
+           <div class="dataSelect-detail">
+				<div class="panelFile">
+					<p class="title">文件</p>
+					<div class="contentDiv">
+						<p class="contentText">导入 Excel、文本文件、Access、空间文件、传统文件或更多</p>
+						<form action="/dataCollection/uploadFile" method="post" id="panelForm" enctype="multipart/form-data" >
+							{% csrf_token %}
+						<input type="file" id="selectedPanelFile" multiple="multiple" name="file"/>
+						<a>获取</a>
+						</form>
+				
+					
+					</div>
+				</div>
+				<div class="dataBase">
+					<p class="title">数据库</p>
+					<div class="contentDiv">
+						<p class="contentText">连接到数据库以及其他来源的实时数据</p>
+						<a id="getBtn">获取</a>
+					</div>
+				</div>
+			</div>
+			<div class="clear"></div>
+        </div>
+		<div class="dataSourceSelect-historyUse"></div>
+		<div class="dataSourceSelect-example"></div>
+		
+		<div id="dataList" style="display: none;">
+		        <div class="top">
+		        		<div id="closeDataList">
+		        			<img src={%  static "images/X_11.png" %} alt="" >
+		        		</div>   
+		        </div>
+		        <div class="commonDataDiv">
+		            <p class="commonDataTitle">常用数据平台</p>
+		            <ul class="baseDetail">
+		           	 	<li>朝阳医院平台</li>
+		                <li>MYSQL</li>
+		                <li>ORACLE</li>
+		            </ul>
+		            <div class="line"></div>
+		      	 </div>
+		      	 <div class="moreData">
+		      	 	<p id="moreDataBtn">更多数据平台</p>
+		      	 </div>
+	   		 </div>
+	</div>
+
+{% endblock %}

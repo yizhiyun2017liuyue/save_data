@@ -1,0 +1,326 @@
+{% extends "common/nav_base.html" %}
+{% load static %}
+{% block css %}	
+	<link rel="stylesheet" type="text/css" href={%static "dataCollection/css/dataAnalysis.css" %}/>
+	<link rel="stylesheet" type="text/css" href={%static "dataCollection/css/tableDrag.css" %}/>
+{% endblock %}
+{% block js %}
+    <script src={% static "dataCollection/js/dataAnalysis.js"%} type="text/javascript" charset="utf-8"></script>
+        <script src={% static "dataCollection/js/jquery.jsPlumb-1.4.0-all.js"%} type="text/javascript" charset="utf-8"></script>
+         <script src={% static "dataCollection/js/dragUI.js"%} type="text/javascript" charset="utf-8"></script>
+       <script src={% static "dataCollection/js/tableDrag.js"%} type="text/javascript" charset="utf-8"></script>
+        <script src={% static "dataCollection/js/judgeType.js"%} type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block content %}
+<div id="analysisContainer">
+		<!--左侧折叠按钮-->
+	<div id="foldSideBtn">
+				<img src={%static "dataCollection/images/nr_47.png" %} />
+	</div>
+
+		<div class="leftSlide">
+			
+			<div id="connectDirector">
+				<div class="conn">
+					<span class="text">连接</span>
+					<div class="btn" id="addDataSourceBtn">
+						<img src={%static "dataCollection/images/add.png" %} alt="" title="新增数据源"/>
+					</div>
+					<div id="addSourceSelects">
+						<img src={%static "dataCollection/images/SANJIAO_11.png" %} alt="" />
+						<p>新增数据平台</p>
+						<input type="file"  multiple="multiple" name="file" id="addPanelFileInput"/>
+						<p class="last">新增本地文件</p>
+					</div>
+				</div>
+				<ul class="paltFormList">
+					{% for item,value in paltInfoList.db.items %}
+                        <li>
+                        		<img src={%static "dataCollection/images/data.png" %} alt="" />
+                       	 	<span>{{ value.dbPaltName }}</span>
+                        </li>
+                    {% endfor %}
+                    
+                    
+                    {% for item in paltInfoList.panel %}
+                        <li>
+                        		<img src={%static "dataCollection/images/file.png" %} alt="" />
+                       	 	<span>{{ item.fileName }}</span>
+                        </li>
+                    {% endfor %}
+                    
+                    
+				</ul>
+				<div class="line"></div>
+			</div>
+			<div id="dataSet">
+				<div class="dataSetTitle">
+					<span>数据集</span>
+					<div><img src= {% static "dataCollection/images/folder.png"%}  alt="" id="newFolder" title="新建文件夹"/></div>
+					<div><img src={% static "dataCollection/images/data_set.png"%} alt="" id="newSet" title="新建数据集"/></div>
+				</div>
+				<ul class="detailDataSetList">
+					<li id="baseSetTemplate">
+						<div class="dataSetItemTitle" openFlag="on">
+							<img src= {% static "dataCollection/images/left_40.png"%} alt="" />
+							<span>默认数据集</span>
+						</div>
+						<div class="theDataSetContent">
+								<div class="dataSetDetail">
+								{% for key,value in paltInfoList.db.items %}
+									<div class="dbDataShow">
+										<select dbIndex={{key}}>
+										{% for op in value.dataBasesRs %}
+										<option value={{op}}>{{op}}</option>
+										{% endfor %}
+										</select>
+										<div class="tablesOfaData">
+									
+										</div>
+									</div>
+								{% endfor %}	
+									
+									{% for item in paltInfoList.panel %}	
+										<div class="panelDataShow">
+											<p class="panelTitle">{{item.fileName}}</p>
+											<div class="panelFileSheetData">
+												{% for t in item.fileConent%}
+													<p>{{t}}</p>
+												{%endfor%}
+											</div>
+										</div>
+									{% endfor %}
+											
+								</div>
+								
+						</div>
+						
+					</li>
+				</ul>
+			</div>
+			<!--连接数据库窗口-->
+			<div id="dataList" style="display: none;">
+		        <div class="top">
+		        		<div id="closeDataList">
+		        			<img src={%  static "images/X_11.png" %} alt="" >
+		        		</div>   
+		        </div>
+		        <div class="commonDataDiv">
+		            <p class="commonDataTitle">常用数据平台</p>
+		            <ul class="baseDetail">
+		           	 	<li>朝阳医院平台</li>
+		                <li>MYSQL</li>
+		                <li>ORACLE</li>
+		            </ul>
+		            <div class="line"></div>
+		      	 </div>
+		      	 <div class="moreData">
+		      	 	<p id="moreDataBtn">更多数据平台</p>
+		      	 </div>
+	   		 </div>
+			
+		</div>
+		<div class="mainDragArea" id="mainDragArea">
+			
+			<div id="dragTableDetailInfo" style="display: none;">
+				<div class="imgBox" title="详情" flag = "detail">
+					<img src={%static "dataCollection/images/sheet_50.png"  %} alt="" />
+				</div>
+				<div class="line"></div>
+				<div  class="imgBox" title="删除表格" flag = "deleteTable">
+					<img src={%static "dataCollection/images/sheet_54.png"  %} alt="" />
+				</div>
+				<div class="line"></div>
+				<div  class="imgBox lastImgBox" title="删除连接" flag = "deleteCon">
+					<img src={%static "dataCollection/images/sheet_47.png"  %} alt=""  />
+				</div>
+				
+			</div>
+			
+			
+			<div id="connectModalprompt" style="display: none;">
+				<p class="title">连接</p>
+				<!--<div class="line"></div>-->
+				<div class="btnSelects">
+					<div class="active"><img src={%static "dataCollection/images/inline.png" %} alt="" /><p>内连</p></div>
+					<div><img src={%static "dataCollection/images/left.png"  %} alt="" /><p>左连</p></div>
+					<div><img src={%static "dataCollection/images/right.png"  %} alt="" /><p>右连</p></div>
+					<div><img src={%static "dataCollection/images/Outreach.png"  %} alt="" /><p>全连</p></div>
+					<div><img src={%static "dataCollection/images/breakoff.png" %} alt="" /><p>断开</p></div>
+				</div>
+				<div class="selectInfoDiv">
+					<div class="selectHeader">
+						<p></p>
+						<p>条件</p>
+						<p></p>
+					</div>
+					<div class="selectContent">
+						<div class="selectDiv">
+							<div><span>请选择</span><select name="" class="select_sourceList"></select></div>
+							<div><span>=</span><select name="" class="select_comparison">
+								<option value="=">=</option>
+							</select></div>
+							<div><span>请选择</span><select name="" class="select_targetList"></select></div>
+						</div>
+						
+					</div>
+					<div class="selectFooter">
+						<span id="confirmRelationBtn">确定</span>
+						<span id="cancleRelationBtn">取消</span>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		<div class="clear"></div>
+	
+	<div id="passway">
+		<span id="constructData" class="active">构建数据</span>
+		<span id="dashBoardWay">仪表盘</span>
+	</div>
+	
+	<!--新增数据集弹框-->
+	<div id="newSetPrompt">
+		<img src={%static "dataCollection/images/exit_33.png" %} alt="" title="关闭" id="closeNewSetPrompt"/>
+		<div class="setFlagContainer">
+			<img src={%static "dataCollection/images/setdata_37.png" %} alt="" />
+			<p>创建数据集</p>
+		</div>
+		<div class="bottomInfo">
+				<label>数据集名称:<input type="text"placeholder="请在此输入数据集名称" id="setNameInput" /></label>		
+		</div>
+		<div class="btnDivHelp">
+			<a id="newSetConfirmBtn">确定</a>
+		</div>
+	</div>
+	
+	
+	
+	
+		<!-- 数据详情-点击弹框详情按钮展示-->
+	<div id="tableDataDetailListPanel" style="display: none;">
+		<img src={% static "dataCollection/images/tableDataDetail/Drop-down.png" %} alt="" id="closeableDataDetailListPanel"/>
+		<div class="topInfo">
+			<div>
+				<img src={%static "dataCollection/images/tableDataDetail/Split.png" %} alt="" />
+			</div>
+			<div>
+				<img src={%static "dataCollection/images/tableDataDetail/filter.png" %} alt="" />
+			</div>
+			<div id="showHiddenEles">
+				<img src={%static "dataCollection/images/tableDataDetail/handle_33.png" %} alt="" /><span>显示隐藏字段</span>
+			</div>
+			<div id="hiddenEle">
+				<img src={%static "dataCollection/images/tableDataDetail/handle_33.png" %} alt="" /><span>隐藏字段</span>
+			</div>
+		</div>
+		<div class="mainContent">
+			<table  cellspacing="0" cellpadding="0">
+				<thead>
+					<tr></tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+	
+</div>
+
+{%endblock%}
+ {% block other %}
+ <!-- 构建数据弹框-->
+ 	<div class="buildDataPanelView" id="buildDataPanelView" style="display: none;">
+ 		<div class="topline"></div>
+		<div class="common-head">
+			<span class="logo">筛选器</span>
+			<div class="close">
+				<img src={% static "images/contentFilter/X_33.png" %} alt="" title="关闭" />
+			</div>
+		</div>
+ 		<div class="build-body">
+ 			<div class="cube-name-radio">
+ 				<p class="cover-original-cube radio">覆盖</p>
+ 				<p class="new-cube radio">新建cube</p>
+ 			</div>
+ 			<div class="cube-name-input-div">
+ 				<span>数据cube名称:</span><input type="text" placeholder="请输入数据Cube名称"/>
+ 			</div>
+ 			<div class="build-options">
+ 				<p class="title">构建选项</p>
+ 				<div class="save-type">
+ 					<p class="radio active lcoal-save">全部保存</p>
+ 					<p class="radio global-save">局部保存</p>
+ 				</div>
+ 				<div class="more-content-div" style="display: none;">
+ 					<p>更多设置(单个表数据量)</p>
+ 					<label class="check-label"><input type="checkbox"/>行数</label><label class="text-label"><input type="text" /></label>
+ 				</div>
+ 			</div>
+ 			
+ 		</div>	
+ 		<div class="build-footer">
+ 			<a href="javascript:void(0)" class="moreSetting">更多设置</a><a href="javascript:void(0)" class="cancleBtn">取消</a><a href="javascript:void(0)" class="confirmBtn">确定</a>
+ 		</div>
+ 	</div>
+
+
+ 	<!-- 构建数据加载进度条 -->
+ 	<div id="build_upload" style="display: none">
+  		<!-- 关闭按钮 -->
+  		<div id="loding_close"></div>
+ 		<!-- 构建数据成功失败提示 -->
+ 		<div id="prompt_message" class="clear">
+ 			<span class="data_success_img" id="data_success_content"></span>
+ 			<span class="prompt_message_text">构建数据中</span>
+ 			<!--加载动态效果 -->
+ 			<div class="prompt_message_upload">
+ 				<span></span>
+ 				<span></span>
+ 				<span></span>
+ 			</div>
+ 		</div>
+
+ 		<!--加载进度条-->
+ 		<div id="loading_progress_bar">
+ 			<!--show -->
+ 			<div id="loading_progress_bar_active">
+ 				<!-- 进度 -->
+ 			<div id="loading_percentage" class="loading_percentage_ac"><span>0</span>%</div>
+ 			<!-- circle -->
+ 			<div id="loading_circle"></div>
+ 			</div>
+
+ 		</div>
+
+ 		<!-- 构建失败显示点击按钮 -->
+ 		<div id="build_false_btn" class="confirmBtn" style="display: none">
+ 			重新构建
+ 		</div>
+ 	</div>
+
+
+
+ 	<!--跳转到仪表盘或者分析 -->
+ 	<div id="choose_menu">
+ 		<!-- title -->
+ 		<div id="choose_menu_title">选择进入模块</div>
+
+ 		<!--模块点击展示-->
+ 		<div id="choose_menu_content">
+ 			<ul>
+ 				<li>
+ 					<a href="../dashboard/pallasdata2"><img src={%static "dataCollection/images/dashboard.png" %} alt="dashboard" id="choose_dashboard"></a>
+ 					<p>仪表板</p>
+ 				</li>
+ 				<li>
+ 					<a href="javascript:void(0)"><img src={%static "dataCollection/images/analysis.png" %} alt="analysis" id="choose_analysis"></a>
+ 					<p>统计分析</p>
+ 				</li>
+ 				<li>
+ 					<a href="javascript:void(0)"><img src={%static "dataCollection/images/Data-integration.png" %} alt="Data-integration" id="choose_integration"></a>
+ 					<p>数据集成</p>
+ 				</li>
+ 			</ul>
+ 		</div>
+ 	</div>
+ {% endblock %}
